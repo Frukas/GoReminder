@@ -19,8 +19,12 @@ func (c custTheme) ButtonColor() color.Color {
 	return theme.DarkTheme().ButtonColor()
 }
 
+// func (c custTheme) HyperlinkColor() color.Color {
+// 	return theme.DarkTheme().HyperlinkColor()
+// }
+
 func (c custTheme) HyperlinkColor() color.Color {
-	return theme.DarkTheme().HyperlinkColor()
+	return theme.DarkTheme().PrimaryColor()
 }
 
 func (c custTheme) TextColor() color.Color {
@@ -103,8 +107,12 @@ func (c custTheme) DisabledButtonColor() color.Color {
 	return theme.DarkTheme().DisabledButtonColor()
 }
 
+// func (c custTheme) DisabledIconColor() color.Color {
+// 	return theme.DarkTheme().DisabledIconColor()
+// }
+
 func (c custTheme) DisabledIconColor() color.Color {
-	return theme.DarkTheme().DisabledIconColor()
+	return theme.DarkTheme().DisabledTextColor()
 }
 
 func (c custTheme) DisabledTextColor() color.Color {
@@ -115,8 +123,12 @@ func (c custTheme) HoverColor() color.Color {
 	return theme.DarkTheme().HoverColor()
 }
 
+// func (c custTheme) IconColor() color.Color {
+// 	return theme.DarkTheme().IconColor()
+// }
+
 func (c custTheme) IconColor() color.Color {
-	return theme.DarkTheme().IconColor()
+	return theme.DarkTheme().TextColor()
 }
 
 func (c custTheme) ScrollBarSmallSize() int {

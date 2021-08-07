@@ -21,7 +21,7 @@ func TestSubstractSec(t *testing.T) {
 	correctResult := []string{
 		"04:03:01",
 		"00:00:00",
-		"00:59:00",
+		"00:59:59",
 		"00:00:59",
 	}
 

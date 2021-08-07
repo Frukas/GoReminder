@@ -23,6 +23,7 @@ type screenContainner struct {
 	stopButton        *widget.Button
 	custTime          *widget.Entry
 	plusWindowsButton *widget.Button
+	stop              bool
 }
 
 func (s *screenContainner) init() {
@@ -39,8 +40,9 @@ func (s *screenContainner) init() {
 	s.topLabel.TextStyle = fyne.TextStyle{Bold: true, Italic: false, Monospace: false}
 	s.startButton, s.stopButton = s.createStartStopButton()
 	s.timer = &TimeFormat{}
-	s.custTime = widget.NewEntry()
-	s.custTime.PlaceHolder = "minutes"
+	s.custTime = s.createCustTime()
+	// s.custTime = widget.NewEntry()
+	// s.custTime.PlaceHolder = "minutes"
 	s.plusWindowsButton = s.CreatePlusWindowsButton()
 }
 
@@ -54,6 +56,17 @@ func (s *screenContainner) setNewContainer() fyne.CanvasObject {
 	return horizontalContainer
 }
 
+func (s *screenContainner) createCustTime() *widget.Entry {
+	custTime := widget.NewEntry()
+	custTime.PlaceHolder = "minutes"
+
+	custTime.OnChanged = func(input string) {
+		s.setTimerCount(s.timer.formatingMin(input))
+	}
+
+	return custTime
+}
+
 func (s *screenContainner) createCheckBox() *widget.SelectEntry {
 
 	strngList := []string{"00:05:00", "00:10:00", "00:15:00", "00:30:00", "01:00:00", "03:00:00"}
@@ -61,10 +74,11 @@ func (s *screenContainner) createCheckBox() *widget.SelectEntry {
 	selectItens.SetPlaceHolder("00:00:00")
 	selectItens.OnChanged = func(input string) {
 		if s.custTime.Text == "" {
+			s.stop = false
 			s.timer.setNewTime(input)
+			s.setTimerCount(input)
 		}
 	}
-
 	return selectItens
 }
 
@@ -78,12 +92,13 @@ func (s *screenContainner) setTimerCount(count string) {
 func (s *screenContainner) createStartStopButton() (*widget.Button, *widget.Button) {
 	tickSecond := time.NewTicker(time.Second)
 	flag := false
+
 	stbutton := widget.NewButton("Start", func() {
-		//fmt.Println(s.timer.toString())
-		//s.setTimerCount(s.timer.toString())
+
 		if s.custTime.Text != "" {
 			if s.timer.checkStringTonumber(s.custTime.Text) {
 				s.timer.setNewTime(s.timer.formatingMin(s.custTime.Text))
+
 			} else {
 				s.custTime.Text = ""
 			}
@@ -91,19 +106,35 @@ func (s *screenContainner) createStartStopButton() (*widget.Button, *widget.Butt
 		go func() {
 
 			for range tickSecond.C {
+
 				s.setTimerCount(s.timer.toString())
-				//s.timer.substractSec()
-				if s.timer.isZeroTime() {
-					s.setTimerCount(s.timer.toString())
-					go s.alertScreenShow()
-					s.timer.reset()
-					return
-				} else if flag {
+
+				// if s.timer.isZeroTime() {
+				// 	s.setTimerCount(s.timer.toString())
+				// 	//go s.alertScreenShow()
+				// 	s.alertScreenShow()
+				// 	s.timer.reset()
+				// 	return
+				// } else if flag {
+				// 	flag = false
+
+				// 	i++
+				// 	return
+				// }
+
+				if flag {
 					flag = false
 					return
+				} else if s.timer.isZeroTime() {
+					s.setTimerCount(s.timer.toString())
+					//go s.alertScreenShow()
+					s.alertScreenShow()
+					s.timer.reset()
+					return
 				}
-				//s.setTimerCount(s.timer.toString())
+
 				s.timer.substractSec()
+
 			}
 		}()
 
@@ -112,11 +143,11 @@ func (s *screenContainner) createStartStopButton() (*widget.Button, *widget.Butt
 	spButton := widget.NewButton("Stop", func() {
 		flag = true
 
-		s.timer.reset()
-		s.setTimerCount("00:00:00")
+		s.timer.resetToZero()
 		s.custTime.Text = ""
 		s.custTime.Refresh()
-		s.custTime.Refresh()
+		s.checkBox.SetText("00:00:00")
+
 	})
 	return stbutton, spButton
 }

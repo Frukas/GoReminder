@@ -31,6 +31,7 @@ func (t *TimeFormat) substractSec() {
 			if t.hour > 0 {
 				t.hour--
 				t.min = 59
+				t.sec = 59
 			}
 		}
 	}
